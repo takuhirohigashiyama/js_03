@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Chatアプリ</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- コンテンツ表示画面 -->
+<div class="wrapper">
+  <div class="title"><h1>簡易チャットアプリ</h1></div>
+  <div class="name-box">
+    <div>名前：<input type="text" id="uname"></div>
+    <textarea id="text" cols="30" rows="10"></textarea>
+  </div>
+  <button id="send">送信</button>
+  <div id="output"></div>
+</div>
+
+<!--/ コンテンツ表示画面 -->
+
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+
+
+<!--** 以下Firebase **-->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.20.0/firebase.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+    https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const ref = firebase.database().ref();
+
+  // 関数定義
+  function send(){
+    var now = new Date();
+    var year = now.getFullYear();
+    var mon = now.getMonth()+1;
+    var day = now.getDate();
+    var hour = now.getHours();
+    var min = now.getMinutes();
+    var sec = now.getSeconds();
+    var t = year + '年' + mon + '月' + day + '日' + hour + '時' + min + '分' + sec + '秒';
+    const time = $("#view_time").val();
+    const uname = $("#uname").val();
+    const text = $("#text").val();
+    const msg = {
+    uname:uname,
+    text:text,
+    now:t
+        }
+        ref.push(msg); //set=決まった名前、push=ユニーク
+  }
+
+  // 文字を送信
+  $("#send").on("click",function(){
+    send();
+    const psconsole = $('#output');
+    psconsole.scrollTop(
+      psconsole[0].scrollHeight - psconsole.height()
+    );
+  });
+  
+  // 受信処理
+  ref.on("child_added",function(data){
+    const v = data.val(); //送信されたオブジェクトを取得
+    const k = data.key; //ユニークキーの取得
+    const n = data.val(); 
+    const h = '<p>'+v.uname+'<br>'+n.now+'<br>'+v.text+'</p>';
+    $("#output").append(h);
+  });
+
+  // イベント情報取得
+  $("#text").on("keydown",function(e){
+    console.log(e);
+    send();
+  });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
